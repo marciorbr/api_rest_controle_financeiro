@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  db_fin:
+    image: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_DB: app_fin
+      POSTGRES_PASSWORD: app_password
+    ports:
+      - "5432:5432"
+
+  # app:
+  #   image: app
+  #   entrypoint: ./entrypoint.sh
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - db_fin
+  #   environment:
+  #     DATABASE_URL: postgresql://user:app_password@db_fin:5432/app_fin
+
+volumes:
+  pgdata:
