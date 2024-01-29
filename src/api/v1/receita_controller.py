@@ -37,3 +37,13 @@ def listar_receitas(session: Session):
     receitas = session.scalars(query).all()
 
     return {'receitas': receitas}
+
+
+@router.get('/{id}', response_model=ReceitaPublic)
+def detalhes_receita(id: int, session: Session):
+    receita = session.scalar(select(Receitas).where(Receitas.id == id))
+
+    if not receita:
+        raise HTTPException(status_code=404, detail='Receita não encontrada')
+    
+    return receita
