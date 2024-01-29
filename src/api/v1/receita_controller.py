@@ -16,9 +16,8 @@ Session = Annotated[Session, Depends(get_session)]
 def criar_receita(receita: ReceitaSchema, session: Session):
     receita_descricao = session.scalar(select(Receitas).where(Receitas.descricao == receita.descricao))
     
-    if receita_descricao:
-        raise HTTPException(status_code=400, detail='Essa descição de receita já existe')
-
+    if receita_descricao and receita_descricao.data.month == receita.data.month:
+        raise HTTPException(status_code=400, detail='Já existe uma receita com essa descrição cadastrada esse mês')
 
     new_receita: Receitas = Receitas(
         descricao=receita.descricao,
