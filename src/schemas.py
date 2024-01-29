@@ -2,9 +2,10 @@ import datetime
 
 from pydantic import BaseModel
 
-
-class Book(BaseModel):
-    id: int
+class ReceitaSchema(BaseModel):
     descricao: str
     valor: int
     data: datetime.date
+    
+class ReceitaPublic(ReceitaSchema):
+    id: int

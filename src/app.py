@@ -1,6 +1,6 @@
 from fastapi import FastAPI, status
 from pydantic import BaseModel
-from src.api.v1 import despesa_controller
+from src.api.v1 import despesa_controller, receita_controller
 
 
 app = FastAPI(
@@ -9,6 +9,7 @@ app = FastAPI(
 )
 
 app.include_router(despesa_controller.router)
+app.include_router(receita_controller.router)
 
 
 class HealthCheck(BaseModel):
