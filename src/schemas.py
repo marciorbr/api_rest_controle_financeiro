@@ -9,3 +9,6 @@ class ReceitaSchema(BaseModel):
     
 class ReceitaPublic(ReceitaSchema):
     id: int
+
+class ReceitaList(BaseModel):
+    receitas: list[ReceitaPublic]

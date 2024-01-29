@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from src.database import get_session
-from src.schemas import ReceitaSchema, ReceitaPublic
+from src.schemas import ReceitaSchema, ReceitaPublic, ReceitaList
 from src.models import Receitas
 
 
@@ -30,3 +30,10 @@ def criar_receita(receita: ReceitaSchema, session: Session):
 
     return new_receita
 
+
+@router.get('/', response_model=ReceitaList)
+def listar_receitas(session: Session):
+    query = select(Receitas)
+    receitas = session.scalars(query).all()
+
+    return {'receitas': receitas}
