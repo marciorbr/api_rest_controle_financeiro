@@ -36,3 +36,12 @@ def listar_despesas(session: Session):
     despesas = session.scalars(query).all()
 
     return {'despesas': despesas}
+
+@router.get('/{id}', response_model=DespesaPublic)
+def detalhes_despesa(id: int, session: Session):
+    despesa = session.scalar(select(Despesas).where(Despesas.id == id))
+
+    if not despesa:
+        raise HTTPException(status_code=404, detail='Despesa não encontrada')
+    
+    return despesa
