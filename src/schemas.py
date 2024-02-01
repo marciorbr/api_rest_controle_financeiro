@@ -12,3 +12,8 @@ class ReceitaPublic(ReceitaSchema):
 
 class ReceitaList(BaseModel):
     receitas: list[ReceitaPublic]
+
+class ReceitaUpdate(BaseModel):
+    descricao: str | None = None
+    valor: int | None = None
+    data: datetime.date | None = None

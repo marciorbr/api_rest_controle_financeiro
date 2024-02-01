@@ -2,10 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import Annotated
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from datetime import date
 
 from src.database import get_session
-from src.schemas import ReceitaSchema, ReceitaPublic, ReceitaList
+from src.schemas import ReceitaSchema, ReceitaPublic, ReceitaList, ReceitaUpdate
 from src.models import Receitas
+
+from src.services import verifica_duplicidade_receitas
 
 
 router = APIRouter(prefix='/api/v1/receita', tags=['receita'])
@@ -47,3 +50,25 @@ def detalhes_receita(id: int, session: Session):
         raise HTTPException(status_code=404, detail='Receita não encontrada')
     
     return receita
+
+@router.put('/{id}', response_model=ReceitaPublic)
+def atualizar_receita(id: int, session: Session, receita: ReceitaUpdate):
+    
+    q_receita = session.scalar(select(Receitas).where(Receitas.id == id))
+
+    if not q_receita:
+        raise HTTPException(status_code=404, detail='Receita não encontrada')
+    
+    data_mes_atual = date.today()
+    receita_descricao = session.scalar(select(Receitas).where(Receitas.descricao == receita.descricao))
+    if receita_descricao and receita_descricao.data.month == data_mes_atual.month:
+        raise HTTPException(status_code=400, detail='Já existe uma receita com essa descrição cadastrada esse mês')
+    
+    for key, value in receita.model_dump(exclude_unset=True).items():
+        setattr(q_receita, key, value)
+
+    session.add(q_receita)
+    session.commit()
+    session.refresh(q_receita)
+
+    return q_receita
