@@ -8,8 +8,6 @@ from src.database import get_session
 from src.schemas import ReceitaSchema, ReceitaPublic, ReceitaList, ReceitaUpdate
 from src.models import Receitas
 
-from src.services import verifica_duplicidade_receitas
-
 
 router = APIRouter(prefix='/api/v1/receita', tags=['receita'])
 
