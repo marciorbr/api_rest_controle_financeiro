@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from src.database import get_session
 from src.models import Despesas
-from src.schemas import DespesaPublic, DespesaSchema
+from src.schemas import DespesaPublic, DespesaSchema, DespesaList
 
 
 router = APIRouter(prefix='/api/v1/despesa', tags=['despesa'])
@@ -29,3 +29,10 @@ def criar_despesa(despesa: DespesaSchema, session: Session):
     session.refresh(new_despesa)
 
     return new_despesa
+
+@router.get('/', response_model=DespesaList)
+def listar_despesas(session: Session):
+    query = select(Despesas)
+    despesas = session.scalars(query).all()
+
+    return {'despesas': despesas}

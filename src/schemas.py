@@ -28,3 +28,6 @@ class DespesaSchema(BaseModel):
     
 class DespesaPublic(DespesaSchema):
     id: int
+
+class DespesaList(BaseModel):
+    despesas: list[DespesaPublic]
