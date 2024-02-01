@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from datetime import date
 
 from src.database import get_session
-from src.schemas import ReceitaSchema, ReceitaPublic, ReceitaList, ReceitaUpdate
+from src.schemas import ReceitaSchema, ReceitaPublic, ReceitaList, ReceitaUpdate, Message
 from src.models import Receitas
 
 
@@ -70,3 +70,16 @@ def atualizar_receita(id: int, session: Session, receita: ReceitaUpdate):
     session.refresh(q_receita)
 
     return q_receita
+
+@router.delete('/{id}', response_model=Message)
+def deletar_receita(id: int, session: Session):
+    
+    q_receita = session.scalar(select(Receitas).where(Receitas.id == id))
+
+    if not q_receita:
+        raise HTTPException(status_code=404, detail='Receita não encontrada')
+    
+    session.delete(q_receita)
+    session.commit()
+
+    return {'detail': 'Receita deletada com sucesso!'}

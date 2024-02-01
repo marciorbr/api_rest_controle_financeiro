@@ -17,3 +17,6 @@ class ReceitaUpdate(BaseModel):
     descricao: str | None = None
     valor: int | None = None
     data: datetime.date | None = None
+
+class Message(BaseModel):
+    detail: str
