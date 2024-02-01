@@ -2,6 +2,9 @@ import datetime
 
 from pydantic import BaseModel
 
+class Message(BaseModel):
+    detail: str
+
 class ReceitaSchema(BaseModel):
     descricao: str
     valor: int
@@ -18,5 +21,10 @@ class ReceitaUpdate(BaseModel):
     valor: int | None = None
     data: datetime.date | None = None
 
-class Message(BaseModel):
-    detail: str
+class DespesaSchema(BaseModel):
+    descricao: str
+    valor: int
+    data: datetime.date
+    
+class DespesaPublic(DespesaSchema):
+    id: int
