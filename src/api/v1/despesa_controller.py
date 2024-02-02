@@ -1,3 +1,4 @@
+from datetime import date
 from fastapi import APIRouter, Depends, HTTPException
 from typing import Annotated
 from sqlalchemy import select
@@ -5,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from src.database import get_session
 from src.models import Despesas
-from src.schemas import DespesaPublic, DespesaSchema, DespesaList
+from src.schemas import DespesaPublic, DespesaSchema, DespesaList, DespesaUpdate
 
 
 router = APIRouter(prefix='/api/v1/despesa', tags=['despesa'])
@@ -45,3 +46,26 @@ def detalhes_despesa(id: int, session: Session):
         raise HTTPException(status_code=404, detail='Despesa não encontrada')
     
     return despesa
+
+@router.put('/{id}', response_model=DespesaPublic)
+def atualizar_despesa(id: int, session: Session, despesa: DespesaUpdate):
+    
+    q_despesa = session.scalar(select(Despesas).where(Despesas.id == id))
+
+    if not q_despesa:
+        raise HTTPException(status_code=404, detail='Despesa não encontrada')
+    
+    data_mes_atual = date.today()
+    
+    despesa_descricao = session.scalar(select(Despesas).where(Despesas.descricao == despesa.descricao))
+    if despesa_descricao and despesa_descricao.data.month == data_mes_atual.month:
+        raise HTTPException(status_code=400, detail='Já existe uma despesa com essa descrição cadastrada esse mês')
+    
+    for key, value in despesa.model_dump(exclude_unset=True).items():
+        setattr(q_despesa, key, value)
+
+    session.add(q_despesa)
+    session.commit()
+    session.refresh(q_despesa)
+
+    return q_despesa

@@ -31,3 +31,8 @@ class DespesaPublic(DespesaSchema):
 
 class DespesaList(BaseModel):
     despesas: list[DespesaPublic]
+
+class DespesaUpdate(BaseModel):
+    descricao: str | None = None
+    valor: int | None = None
+    data: datetime.date | None = None
